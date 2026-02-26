@@ -44,6 +44,7 @@ export default function Videos() {
                 src={video.src}
                 controls
                 autoPlay
+                muted
                 playsInline
                 className="w-full h-[500px] object-cover"
                 onEnded={handleVideoEnd}

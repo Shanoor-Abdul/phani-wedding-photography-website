@@ -15,7 +15,7 @@ export const albums = [
     slug: "sara-daniel-wedding",
     title: "Sara & Daniel",
     date: "March 2024",
-    cover: "/albums/album2/cover.avif",
+    cover: "/albums/album2/cover.jpg",
     images: [
       "/albums/album2/1.jpg",
       "/albums/album2/2.jpg",
