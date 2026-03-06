@@ -43,4 +43,6 @@ next-env.d.ts
 
 *.mp4
 *.mov
+*.avi
+*.mkv
 public/videos/

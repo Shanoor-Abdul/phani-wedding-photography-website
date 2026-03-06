@@ -5,7 +5,7 @@ export default function Hero() {
     // <section id="hero" className="relative h-screen flex items-center justify-center" >
     <section id="hero" className="relative min-h-[80vh] flex items-center justify-center py-20">
       <Image
-        src="/images/hero.png"
+        src="/images/hero.jpg"
         alt="Wedding Photography"
         fill
         priority

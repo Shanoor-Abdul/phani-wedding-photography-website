@@ -6,10 +6,11 @@ import Image from "next/image";
 import Lightbox from "@/components/ui/Lightbox";
 
 const images = [
-  "/images/gallery1.png",
-  "/images/gallery2.png",
-  "/images/gallery3.png",
   "/images/gallery4.png",
+  "/images/gallery5.jpg",
+  "/images/gallery6.jpg",
+  "/images/gallery7.jpg",
+  "/images/gallery8.jpg",
 ];
 
 export default function Gallery() {
