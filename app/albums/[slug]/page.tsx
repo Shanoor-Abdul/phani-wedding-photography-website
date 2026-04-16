@@ -1,34 +1,49 @@
-import { albums } from "@/lib/albums";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import supabase from "@/lib/supabaseClient";
 import ParallaxImage from "@/components/ui/ParallaxImage";
 import AlbumHero from "@/components/ui/AlbumHero";
 
-type Props = {
-  params: Promise<{ slug: string }>;
-};
+export default function AlbumPage() {
+  const { slug } = useParams();
 
-export default async function AlbumPage({ params }: Props) {
-  const { slug } = await params;
-  const album = albums.find((a) => a.slug === slug);
+  const [album, setAlbum] = useState<any>(null);
 
-  if (!album) return notFound();
+  useEffect(() => {
+    async function fetchAlbum() {
+      const { data, error } = await supabase
+        .from("albums")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+
+      if (error) {
+        console.log(error);
+      } else {
+        setAlbum(data);
+      }
+    }
+
+    fetchAlbum();
+  }, [slug]);
+
+  if (!album) {
+    return <p className="text-center py-20">Loading...</p>;
+  }
 
   return (
     <main className="bg-white text-neutral-900">
-      <AlbumHero title={album.title} date={album.date} cover={album.cover} />
+      <AlbumHero
+        title={album.title}
+        date={album.date}
+        cover={album.cover_url}
+      />
 
-      {/* <section className="py-20 sm:py-24 lg:py-32 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
-        {album.images.map((img, index) => (
-          <ParallaxImage
-            key={index}
-            src={img}
-            alt={`Wedding ${index + 1}`}
-          />
-        ))}
-      </section> */}
-
+      {/* 🔥 USE album.images DIRECTLY */}
       <section className="py-24 max-w-6xl mx-auto px-6 space-y-24">
-        {album.images.map((img, index) => {
+        {album.images?.map((img: string, index: number) => {
           if (index % 3 === 0) {
             return (
               <ParallaxImage
@@ -41,7 +56,10 @@ export default async function AlbumPage({ params }: Props) {
 
           return (
             <div key={index} className="grid md:grid-cols-2 gap-8">
-              <ParallaxImage src={img} alt={`Wedding ${index + 1}`} />
+              <ParallaxImage
+                src={img}
+                alt={`Wedding ${index + 1}`}
+              />
             </div>
           );
         })}

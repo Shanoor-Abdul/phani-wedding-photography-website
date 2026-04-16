@@ -1,19 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Masonry from "react-masonry-css";
 import Image from "next/image";
 import Lightbox from "@/components/ui/Lightbox";
-
-const images = [
-  "/images/gallery4.png",
-  "/images/gallery5.jpg",
-  "/images/gallery6.jpg",
-  "/images/gallery7.jpg",
-  "/images/gallery8.jpg",
-];
+import supabase from "@/lib/supabaseClient";
 
 export default function Gallery() {
+  const [photos, setPhotos] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const breakpointColumnsObj = {
@@ -21,6 +15,26 @@ export default function Gallery() {
     1100: 2,
     700: 1,
   };
+
+  useEffect(() => {
+    async function getPhotos() {
+      const { data, error } = await supabase
+        .from("photos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.log(error);
+      } else {
+        setPhotos(data);
+      }
+    }
+
+    getPhotos();
+  }, []);
+
+  // 🔥 Extract image URLs for Lightbox
+  const images = photos.map((photo) => photo.image_url);
 
   return (
     <section id="gallery" className="py-32 bg-neutral-50">
@@ -34,16 +48,15 @@ export default function Gallery() {
           className="flex gap-6"
           columnClassName="space-y-6"
         >
-          {images.map((src, index) => (
+          {photos.map((photo, index) => (
             <div
-              key={index}
+              key={photo.id}
               className="relative cursor-pointer overflow-hidden rounded-xl group"
-              // onClick={() => setSelectedImage(src)}
               onClick={() => setCurrentIndex(index)}
             >
               <Image
-                src={src}
-                alt="Wedding"
+                src={photo.image_url}
+                alt={photo.title || "Wedding"}
                 width={500}
                 height={700}
                 className="w-full h-auto object-cover transition duration-500 group-hover:scale-105"

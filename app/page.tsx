@@ -8,6 +8,7 @@ import Services from "@/components/sections/Services";
 import Hero from "@/components/sections/Hero";
 import Videos from "@/components/sections/Videos";
 import ContactPage from "./contact/page";
+import UploadImage from './../components/Upload';
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
       <FadeSection>
         <ContactPage />
       </FadeSection>
+       <UploadImage />
     </main>
   );
 }

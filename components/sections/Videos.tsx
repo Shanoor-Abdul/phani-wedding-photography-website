@@ -1,66 +1,36 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
+import supabase from "@/lib/supabaseClient";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
+import type { Swiper as SwiperType } from "swiper";
 
-import { useRef } from "react";
-import { videos } from "@/lib/videos";
+interface Video {
+  id: string;
+  video_url: string;
+  title: string;
+}
 
 export default function Videos() {
-  const swiperRef = useRef<any>(null);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const swiperRef = useRef<SwiperType | null>(null);
 
-  const handleVideoEnd = () => {
-    if (swiperRef.current) {
-      swiperRef.current.slideNext();
+  useEffect(() => {
+    async function getVideos() {
+      const { data } = await supabase.from("videos").select("*");
+      setVideos(data || []);
     }
-  };
+    getVideos();
+  }, []);
 
   return (
-    <section id="videos" className="py-32 bg-neutral-50">
-
-      <div className="max-w-6xl mx-auto px-6 text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-light tracking-wide text-neutral-900">
-          Wedding Stories
-        </h2>
-        <p className="mt-6 text-lg text-neutral-600">
-          Relive the moments through cinematic storytelling
-        </p>
-      </div>
-
-      <Swiper
-        modules={[Autoplay, Pagination]}
-        pagination={{ clickable: true }}
-        loop
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
-        className="max-w-5xl mx-auto"
-      >
-        {videos.map((video, index) => (
-          <SwiperSlide key={index}>
-            <div className="rounded-3xl overflow-hidden shadow-xl">
-
-              <video
-                src={video.src}
-                controls
-                autoPlay
-                muted
-                playsInline
-                className="w-full h-[500px] object-cover"
-                onEnded={handleVideoEnd}
-              />
-
-              <div className="p-6 text-center bg-white">
-                <h3 className="text-xl font-light text-neutral-900">
-                  {video.title}
-                </h3>
-              </div>
-
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-    </section>
+    <Swiper onSwiper={(s) => (swiperRef.current = s)} loop>
+      {videos.map((video) => (
+        <SwiperSlide key={video.id}>
+          <video src={video.video_url} controls />
+          <h3>{video.title}</h3>
+        </SwiperSlide>
+      ))}
+    </Swiper>
   );
 }
